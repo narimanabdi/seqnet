@@ -1,0 +1,15 @@
+# ignore pycahce and ipython cach
+__pycache__/
+.ipynb_checkpoints/
+
+# ignore dataset folder
+datasets/
+
+# ignore model files
+model_files/
+
+#ignore report files
+reports/
+
+#ignore image files
+*.png
