@@ -1,0 +1,10 @@
+#init
+backbone: densenet
+test: gtsrb2tt100k #tt100k32,flick
+dim: 64
+
+#testing parameter
+batch: 128
+iteration: 2
+
+

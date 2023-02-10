@@ -1,0 +1,9 @@
+#initializing
+backbone: densenet
+test: gtsrb2tt100k
+dim: 64
+batch: 128
+epochs: 50
+lr: 1.0e-4
+
+
