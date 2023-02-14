@@ -8,9 +8,11 @@ def get_generator(batch=128,dim=64):
         n_way=43,k_shot=1,batch=batch,data_type='all',
         target_size=(dim,dim))
     te_gen = FLICKR32_Generator(
-        n_way=32,k_shot=1,batch=batch,data_type='all',target_size=(dim,dim))
+        n_way=32,k_shot=1,batch=batch,data_type='all',target_size=(dim,dim),
+        shuffle=False)
     return tr_gen,te_gen
 
 def get_test_generator(batch=128,dim=64):
     return FLICKR32_Generator(
-        n_way=32,k_shot=1,batch=batch,data_type='all',target_size=(dim,dim))
+        n_way=32,k_shot=1,batch=batch,data_type='all',target_size=(dim,dim),
+        shuffle=False)
