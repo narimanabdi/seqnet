@@ -12,7 +12,7 @@ def create_densenet(input_shape = (64,64,3)):
     inp = Input(input_shape)
     densnet = DenseNet121(
         input_shape=input_shape,weights=None,include_top=False)
-    densnet.load_weights('model_files/pretrained_weights/densenet_tiered_last_encoder.h5')
+    densnet.load_weights('model_files/pretrained_weights/densenet_mini.h5')
     dens_encoder = keras.Model(
         inputs=densnet.inputs,
         outputs=densnet.get_layer('conv3_block2_concat').output)

@@ -12,7 +12,6 @@ from tensorflow.keras.models import load_model
 
 
 parser = argparse.ArgumentParser('SENet')
-#parser.add_argument('--cfg',type = str,required = True,help = 'config file')
 parser.add_argument('--mode',type=str,default='metatrain')
 parser.add_argument('--backbone',type=str,default='densenet')
 parser.add_argument('--test',type=str,default='gtsrb2tt100k')
@@ -20,26 +19,15 @@ parser.add_argument('--epochs',type=int,default=50)
 parser.add_argument('--batch',type=int,default=128)
 parser.add_argument('--dim',type=int,default=64)
 parser.add_argument('--lr',type=float,default=1e-4)
-parser.add_argument('--finetune',type = str,default='no')
 
 args = parser.parse_args()
 
-#load config file and import training setting
-#cfg = load_config(args.cfg)
-backbone = args.backbone#cfg['backbone']
-dim = args.dim#cfg['dim']
-batch = args.batch#cfg['batch']
-epochs = args.epochs#cfg['epochs']
-lr = args.lr#cfg['lr']
-#test_mode = args.test
-#learning_rates = np.array([1.0e-4,5.0e-5,2.0e-5,1.0e-5])
-#backbone = args.backbone #cfg['backbone']
-#dim = args.dim#cfg['dim']
+backbone = args.backbone
+dim = args.dim
+batch = args.batch
+epochs = args.epochs
+lr = args.lr
 
-#batch = args.batch#cfg['batch']
-#epochs = args.epochs
-
-#def accuracy fuunction
 train_acc_tracker = Mean('train_accuracy')
 train_loss_tracker = Mean('train_loss')
 test_acc_tracker = Mean('train_accuracy')
@@ -108,12 +96,13 @@ def meta_train(ep):
     best_test_acc = 0.0
 
     senet = make_proto_model(backbone=backbone,input_shape=(dim,dim,3))
+    senet.summary()
     optimizer_fn = keras.optimizers.Adam(learning_rate=lr,epsilon=1.0e-8)
     senet.compile(optimizer=optimizer_fn,loss=loss_mse,metrics=CategoricalAccuracy())
     strat_time = time()
     train_datagen,test_datagen = make_data_generator(args.test)
     plato = 0
-    for step in range(2):
+    for step in range(4):
         print(f'=====step {step+1}=====')
         for epoch in range(ep):
             print(f'====epoch{epoch+1}/{ep}====')
@@ -128,9 +117,8 @@ def meta_train(ep):
             print(f'test accuracy: {te_acc:.4f}')
             print(f'best test accuracy: {best_test_acc:.4f}')
         senet.load_weights('best_weights.h5')
-        #optimizer_fn.learning_rate = optimizer_fn.learning_rate / 2   
-        optimizer_fn.learning_rate = 2.5e-5
-        ep = 150     
+        optimizer_fn.learning_rate = optimizer_fn.learning_rate / 2   
+   
     print('Meta Training has just been ended')
     end_time = time() - strat_time
     print(f'trainig time: {end_time}')

@@ -1,5 +1,5 @@
 from data_loader import belga2flick,belga2toplogo,gtsrb2tt100k
-from data_loader import gtsrb,gtsrb2toplogo,gtsrb2flick,gtsrb2persian
+from data_loader import gtsrb,gtsrb2toplogo,gtsrb2flick
 def get_loader(name):
     return {
         'gtsrb': gtsrb,
@@ -7,6 +7,5 @@ def get_loader(name):
         'belga2toplogo': belga2toplogo,
         'belga2flick': belga2flick,
         'gtsrb2toplogo':gtsrb2toplogo,
-        'gtsrb2flick':gtsrb2flick,
-        'gtsrb2persian':gtsrb2persian
+        'gtsrb2flick':gtsrb2flick
     }[name]

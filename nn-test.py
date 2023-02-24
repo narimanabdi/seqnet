@@ -1,10 +1,9 @@
-#####################
-#                   #
-#     Meta Test     #
-#                   #
-#####################
+#########################
+#                       #
+# Nearest Neighbor Test #
+#                       #
+#########################
 
-from tensorflow.keras.metrics import CategoricalAccuracy
 from time import time
 from data_loader import get_loader
 from tensorflow.keras.models import load_model
@@ -16,14 +15,12 @@ import tensorflow as tf
 from tensorflow.keras.metrics import Mean
 from models.metrics import accuracy
 
-
-
-
 import argparse
 parser = argparse.ArgumentParser('Nearest Neighbor Accuracy')
 parser.add_argument('--test',type = str,default='gtsrb2tt100k',help = 'Test type')
-parser.add_argument('--finetune',type = str,default='no')
+parser.add_argument('--mode',type = str,default='base')
 parser.add_argument('--batch',type = int,default=128)
+
 
 args = parser.parse_args()
 
@@ -34,17 +31,23 @@ test_generator = loader.get_test_generator(batch=batch,dim=64)
 acc_tracker = Mean(name='Nearest_Neighbor_Accuracy')
 time_tracker = Mean(name='Time')
 
-
-
-
-
 if __name__ == '__main__':
-
-    if args.finetune == 'yes':
-        encoder_h5 = 'model_files/best_encoders/densenet_' + args.test + '_encoder_ft.h5'
-    else:
-        encoder_h5 = 'model_files/best_encoders/densenet_' + args.test + '_encoder.h5'
-    #encoder_h5 = 'model_files/best_encoders/w_densenet_gtsrb2tt100k_encoder.h5'
+    if args.mode == 'base':
+        encoder_h5 = 'model_files/best_encoders/densenet_' +\
+              args.test + '_encoder.h5'
+    if args.mode == 'mini':
+        encoder_h5 = 'model_files/best_encoders/densenetmini_' +\
+              args.test + '_encoder.h5'
+    if args.mode == 'random':
+        encoder_h5 = 'model_files/best_encoders/densenet_' +\
+              args.test + '_encoder_random.h5'
+    if args.mode == 'resnet':
+        encoder_h5 = 'model_files/best_encoders/resnet_' +\
+              args.test + '_encoder.h5'
+    if args.mode == 'mobilenet':
+        encoder_h5 = 'model_files/best_encoders/mobilenet_' +\
+              args.test + '_encoder.h5'
+    
     loaded_encoder = load_model(
         encoder_h5,
         custom_objects={
@@ -73,15 +76,13 @@ if __name__ == '__main__':
     
     print('\033[0;32mStart Nearest Neighbor Test\033[0m')
     best_acc = 0
-    for ite in range(1):
-        print(f'\033[0;36m====test {ite+1}====\033[0m')
-        for i,data in enumerate(test_generator):
-            [Xs,Xq],y_test = data
-            Zq = loaded_encoder(Xq)
-            acc_tracker.update_state(nn.score(Zq,y_test)) 
-        if acc_tracker.result() > best_acc:
-            best_acc = acc_tracker.result()
-        acc_tracker.reset_state()
+    for i,data in enumerate(test_generator):
+        [Xs,Xq],y_test = data
+        Zq = loaded_encoder(Xq)
+        acc_tracker.update_state(nn.score(Zq,y_test)) 
+    #if acc_tracker.result() > best_acc:
+        #best_acc = acc_tracker.result()
+    #acc_tracker.reset_state()
 
     print('\033[0;31m')
     print('+---------------------------+')
@@ -89,12 +90,12 @@ if __name__ == '__main__':
     print('+---------------------------+')
     print(f'|      Test    |{args.test}|')
     print('+---------------------------+')
-    print(f'|Mean accuracy |{best_acc:.4f}     |')
+    print(f'|Mean accuracy |{acc_tracker.result():.4f}|')
     print('+---------------------------+')
     print('+---------------------------+')
     print(f'|Average FPS |{fps:.4f}     |')
     print('+---------------------------+')
     print('+---------------------------+')
-    print(f'|Inference time per image |{time_per_image:.2f}     |')
+    print(f'|Inference time per image |{time_per_image:.2f}|')
     print('+---------------------------+')
     print('\033[0m')

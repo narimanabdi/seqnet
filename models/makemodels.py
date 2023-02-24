@@ -1,4 +1,4 @@
-from models import densenet,vggnet,resnet,mobilenet,densenetmini
+from models import densenet,resnet,mobilenet,densenetmini
 from tensorflow.keras.applications import DenseNet121
 from tensorflow import keras
 def make_proto_model(backbone,input_shape):
@@ -6,8 +6,6 @@ def make_proto_model(backbone,input_shape):
         return resnet.create_model(input_shape = input_shape)
     if backbone == 'densenet':
         return densenet.create_model(input_shape = input_shape)
-    if backbone == 'vgg':
-        return vggnet.create_model(input_shape = input_shape)
     if backbone == 'mobilenet':
         return mobilenet.create_model(input_shape = input_shape)
     if backbone == 'densenetmini':

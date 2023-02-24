@@ -14,7 +14,7 @@ from tensorflow.keras.applications import  MobileNetV2
 def create_mobilenet(input_shape = (64,64,3)):
     inp = keras.layers.Input(input_shape)
     mobilenet = MobileNetV2(input_shape=input_shape,weights='imagenet',include_top=False)
-    mob_encoder = keras.Model(inputs=mobilenet.inputs,outputs=mobilenet.get_layer('block_5_add').output)
+    mob_encoder = keras.Model(inputs=mobilenet.inputs,outputs=mobilenet.get_layer('block_6_expand').output)
     mob_encoder.summary()
     x = stn(inp,[64,64,100],kernel_size=(5,5),stage=1)
     x = mob_encoder(x)
