@@ -1,6 +1,7 @@
 from models import densenet,resnet,mobilenet,densenetmini
 from tensorflow.keras.applications import DenseNet121
 from tensorflow import keras
+import tensorflow as tf
 def make_proto_model(backbone,input_shape):
     if backbone == 'resnet':
         return resnet.create_model(input_shape = input_shape)
@@ -25,3 +26,4 @@ def make_base_model(backbone,n_class,dim):
     x = keras.layers.Dense(n_class,activation='softmax')(x)
     
     return keras.Model(inp,x),encoder
+

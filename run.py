@@ -1,7 +1,7 @@
 from tensorflow import keras
 import tensorflow as tf
 from tensorflow.keras.metrics import Mean, CategoricalAccuracy
-from models.metrics import loss_mse,accuracy
+from models.metrics import loss_mse,accuracy,loss_new
 from models.makemodels import make_proto_model
 import argparse
 from time import time
@@ -9,6 +9,7 @@ from data_loader import get_loader
 from models.distances import Weighted_Euclidean_Distance
 from models.stn import BilinearInterpolation,Localization
 from tensorflow.keras.models import load_model
+from models.senet import Senet
 
 
 parser = argparse.ArgumentParser('SENet')
@@ -96,20 +97,24 @@ def meta_train(ep):
     best_test_acc = 0.0
 
     senet = make_proto_model(backbone=backbone,input_shape=(dim,dim,3))
-    senet.summary()
+    #senet = Senet(backbone='densenet',input_shape=(64,64,3))
     optimizer_fn = keras.optimizers.Adam(learning_rate=lr,epsilon=1.0e-8)
-    senet.compile(optimizer=optimizer_fn,loss=loss_mse,metrics=CategoricalAccuracy())
+    senet.compile(optimizer=optimizer_fn,loss_fn=loss_mse,metrics=CategoricalAccuracy(name = 'accuracy'))
+    #senet.build(input_shape=(64,64,3))
+    senet.summary()
+    
     strat_time = time()
     train_datagen,test_datagen = make_data_generator(args.test)
-    plato = 0
     for step in range(4):
         print(f'=====step {step+1}=====')
         for epoch in range(ep):
             print(f'====epoch{epoch+1}/{ep}====')
-            train(
-                model=senet,generator=train_datagen,
-                optimizer=optimizer_fn)
-            te_acc = test(model=senet,generator=test_datagen)
+            senet.fit(train_datagen)
+            #train(
+                #model=senet,generator=train_datagen,
+                #optimizer=optimizer_fn)
+            #te_acc = test(model=senet,generator=test_datagen)
+            te_acc = senet.evaluate(test_datagen, verbose=0)
             if te_acc > best_test_acc:
                 best_test_acc = te_acc
                 senet.save(model_h5)
@@ -128,7 +133,8 @@ def meta_train(ep):
         custom_objects={
             'Weighted_Euclidean_Distance':Weighted_Euclidean_Distance,
             'BilinearInterpolation':BilinearInterpolation,
-            'Localization':Localization},compile=False)
+            'Localization':Localization,
+            'Senet':Senet},compile=False)
     enc = keras.Model(
         inputs=loaded_model.get_layer('encoder').input,
         outputs=loaded_model.get_layer('encoder').output)
@@ -137,28 +143,24 @@ def meta_train(ep):
 
 def meta_test(mode):
     loader = get_loader(mode) 
-    test_generator = loader.get_test_generator(batch=batch,dim=64)
-    if args.finetune == 'yes':
-        model_h5 = 'model_files/best_models/densenet_' + args.test + '_whole_ft.h5'
-    else:
-        model_h5 = 'model_files/best_models/densenet_' + args.test + '_whole.h5'
+    a, test_generator = loader.get_generator(batch=batch,dim=64)
+    model_h5 = 'model_files/best_models/densenet_' + mode + '_whole.h5'
     senet = load_model(
         model_h5,
         custom_objects={
             'Weighted_Euclidean_Distance':Weighted_Euclidean_Distance,
             'BilinearInterpolation':BilinearInterpolation,
-            'Localization':Localization},compile=False)
+            'Localization':Localization,
+            'Senet':Senet},compile=False)
 
-    
-    metric = CategoricalAccuracy()
-    senet.compile(metrics=metric)
+    optimizer_fn = keras.optimizers.Adam(learning_rate=lr,epsilon=1.0e-8)
+    senet.compile(optimizer=optimizer_fn,loss_fn=loss_mse,metrics=CategoricalAccuracy(name = 'accuracy'))
      
     best_acc = 0
-    for ite in range(5):
-        print(f'\033[0;36mstrating test iteration {ite+1}\033[0m')
-        _,acc = senet.evaluate(test_generator,verbose=1)
-        if acc > best_acc:
-            best_acc = acc
+    print(f'\033[0;36mstrating test\033[0m')
+    acc = senet.evaluate(test_generator,verbose=1)
+    if acc > best_acc:
+        best_acc = acc
     print('\033[0;31m')
     print('+---------------------------+')
     print('|       Meta Testing Report      |')

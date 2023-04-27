@@ -143,6 +143,7 @@ class TT100K_Generator(tf.keras.utils.Sequence):
 
         
         self.classes = np.asarray(os.listdir(self.query_path))
+       
         self.classes.sort()
    
         self.IDs = []
@@ -153,6 +154,8 @@ class TT100K_Generator(tf.keras.utils.Sequence):
                 self.IDs += [C+'/'+f]
                 self.labels_IDs += [i]
         self.labels_IDs = np.asarray(self.labels_IDs)
+        #self.indexes = np.arange(len(self.labels_IDs))
+        #np.random.shuffle(self.indexes)
         
         self.on_epoch_end()
     
@@ -173,6 +176,8 @@ class TT100K_Generator(tf.keras.utils.Sequence):
         self.indexes = np.arange(len(self.labels_IDs))
         if self.shuffle:
             np.random.shuffle(self.indexes)
+        else:
+            pass
 
     def __data_generation(self,indexes):
         'Generates data containing batch_size samples' # X : (n_samples, *dim, n_channels)

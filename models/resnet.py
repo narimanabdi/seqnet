@@ -6,6 +6,7 @@ import tensorflow as tf
 from .blocks import conv_block,dcp
 from .distances import Weighted_Euclidean_Distance
 from .stn import stn
+from models.senet import Senet
 
 from tensorflow.keras.applications import ResNet50
 
@@ -25,7 +26,6 @@ def create_resnet(input_shape = (64,64,3)):
         kernel_initializer='he_normal')(x)
     x = stn(x,[100,100,100],stage=2)
     x = conv_block(x,kernel_size=(3,3),n_filters=100,strides=(1,1))
-    x = dcp(x,n_filters=100,kernel_size=(3,3))
     x = MaxPooling2D(pool_size=(2,2),strides=(2,2))(x)
     x = Flatten()(x)
     x = Dense(units = 300,kernel_initializer="he_normal")(x)
@@ -41,4 +41,4 @@ def create_model(input_shape = (64,64,3)):
     query_features = encoder(query)
     dist = Weighted_Euclidean_Distance()([support_features,query_features])
     out = Activation("softmax")(dist)
-    return keras.Model(inputs = [support,query],outputs=out)
+    return Senet(inputs = [support,query],outputs=out)

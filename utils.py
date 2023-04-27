@@ -2,6 +2,7 @@ import yaml
 import os
 import matplotlib.pyplot as plt
 import numpy as np
+from keras import backend as K
 
 def load_config(file_path):
     CONFIG_PATH = './configs'
@@ -46,3 +47,9 @@ def plot_test_multi_line(Xs,Xq,names,predicted_names,size=5,font_size=5,hspace=0
     plt.tight_layout()
     plt.subplots_adjust(hspace=hspace)
     plt.show()
+
+def count_params(model):
+    params = (
+        np.sum([K.count_params(p) for p in model.trainable_weights]) + 
+        np.sum([K.count_params(p) for p in model.non_trainable_weights])) / 1e6
+    return params

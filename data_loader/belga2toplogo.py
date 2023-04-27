@@ -16,7 +16,7 @@ def get_generator(batch=128,dim=64):
         shuffle=False)
     return tr_gen,va_gen,te_gen
 
-def get_test_generator(batch=128,dim=64):
+def get_test_generator(batch=128,dim=64, shuffle=False):
     return TOPLOGO10_Generator(
         n_way=11,k_shot=1,batch=batch,data_type='all',target_size=(dim,dim),
-        shuffle=False)
+        shuffle=shuffle)
