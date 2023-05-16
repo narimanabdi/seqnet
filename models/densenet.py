@@ -1,7 +1,7 @@
 # This module generates encoders for feature extracting
 from tensorflow import keras
 from tensorflow.keras.layers import Input,Flatten,Dense,MaxPooling2D,Conv2D
-from tensorflow.keras.layers import BatchNormalization, Activation, Dropout
+from tensorflow.keras.layers import BatchNormalization, Activation
 from .blocks import conv_block
 from .distances import Weighted_Euclidean_Distance
 from .stn import stn

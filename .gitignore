@@ -1,4 +1,4 @@
-# ignore pycahce and ipython cach
+# ignore pycahce and ipython cache
 __pycache__/
 .ipynb_checkpoints/
 
@@ -8,8 +8,17 @@ datasets/
 # ignore model files
 model_files/
 
-#ignore report files
-reports/
-
 #ignore image files
 *.png
+
+#ignore H5 files
+*.h5
+
+#ignore compressed files
+*.tar
+*.tar.gz
+*.zip
+*.rar
+
+#ignore jupyter notebook files
+*.ipynb

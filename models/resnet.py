@@ -3,7 +3,7 @@ from tensorflow import keras
 from tensorflow.keras.layers import Input,Flatten,Dense,MaxPooling2D,Conv2D
 from tensorflow.keras.layers import BatchNormalization, Activation
 import tensorflow as tf
-from .blocks import conv_block,dcp
+from .blocks import conv_block
 from .distances import Weighted_Euclidean_Distance
 from .stn import stn
 from models.senet import Senet

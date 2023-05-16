@@ -7,5 +7,5 @@ def get_loader(name):
         'belga2toplogo': belga2toplogo,
         'belga2flick': belga2flick,
         'gtsrb2toplogo':gtsrb2toplogo,
-        'gtsrb2flick':gtsrb2flick
+        'gtsrb2flick':gtsrb2flick,
     }[name]

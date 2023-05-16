@@ -5,7 +5,7 @@ from tensorflow.keras.metrics import CategoricalAccuracy
 import os
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import argparse
-from models.makemodels import make_base_model
+from models._makemodels import make_base_model
 
 parser = argparse.ArgumentParser('This is test')
 parser.add_argument('--epochs',type = int,default=100)

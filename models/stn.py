@@ -1,3 +1,4 @@
+'''STN module'''
 import tensorflow as tf
 from tensorflow.keras.layers import MaxPooling2D,Conv2D,Flatten,Dense
 from tensorflow.keras.layers import BatchNormalization,Activation,Reshape
