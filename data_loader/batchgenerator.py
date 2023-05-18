@@ -565,4 +565,3 @@ class GTSRB_Generator(tf.keras.utils.Sequence):
         return tf.constant(X[:self.n_way],dtype='float32'),\
             tf.constant(X[self.n_way:],dtype='float32'),\
                 tf.constant(label_query,dtype='float32')
-

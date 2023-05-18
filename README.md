@@ -38,10 +38,11 @@ to meta-train run this code
 
 
 to run nearest neighbor evaluation
-> python inference.py --backbone \<name of backbone> --data \<test data> --device \<device name> --metric \<nearest neighbor metric>
+> python inference.py --backbone \<name of backbone> --data \<test data> --device \<device name> --dist \<distance metric>
 
 
 to traditional GTSRB benchmark run this code
 > python gtsrb-benchmark.py --mode \<mode name> --epochs \<number of epochs> 
+>
 > \<mode name>: train: training, test: evaluation
 
