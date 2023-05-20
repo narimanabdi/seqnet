@@ -1,16 +1,19 @@
-#Code Repository for SENet Paper
+# Code Repository for SENet Paper
 
-##Requierments
+## Requierments
 
  
 >Python = 3.10,
 Tensorflow = 2.10,
 Scikit-Learn,
 Cuda-Toolkit = 11.2,
-Cudnn = 8.2
+Cudnn = 8.6.0
 >
 
-to meta-train run this code
+## Dataset
+[Download dataset](https://drive.google.com/file/d/178HDL8RhwbH2AbdT0PA_efMnmnJpJiOC/)
+
+### For meta-training, run this code
 > python train.py --backbone \<name of backbone> --test \<test data>
 --epochs \<number of epochs> --batch \<batch size> --lr \<learning rate>
 --dim \<input dimentsion>
@@ -37,11 +40,11 @@ to meta-train run this code
 >mobilenet
 
 
-to run nearest neighbor evaluation
+### Nearest neighbor evaluation
 > python inference.py --backbone \<name of backbone> --data \<test data> --device \<device name> --dist \<distance metric>
 
 
-to traditional GTSRB benchmark run this code
+### Traditional GTSRB benchmark run this code
 > python gtsrb-benchmark.py --mode \<mode name> --epochs \<number of epochs> 
 >
 > \<mode name>: train: training, test: evaluation
