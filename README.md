@@ -13,6 +13,9 @@ Cudnn = 8.6.0
 ## Dataset
 [Download dataset](https://drive.google.com/file/d/178HDL8RhwbH2AbdT0PA_efMnmnJpJiOC/)
 
+## H5 files
+To use our trained models, download and extract model h5 files from this [link](https://drive.google.com/file/d/1bDQk5-POFjlDYRG1TMRclFOXpme_wfY1/)
+
 ### For meta-training, run this code
 > python train.py --backbone \<name of backbone> --test \<test data>
 --epochs \<number of epochs> --batch \<batch size> --lr \<learning rate>
@@ -20,17 +23,17 @@ Cudnn = 8.6.0
 
 >\<test data>
 >
->gtsrb2tt100k: $GTSRB\to TT100K$ (default)
+>gtsrb2tt100k: $\text{GTSRB}\to \text{TT100K}$ (default)
 >
->gtsrb: $GTSRB\to GTSRB$
+>gtsrb: $\text{GTSRB}\to \text{GTSRB}$
 >
->belga2flick: $Belga\to Flickr32$
+>belga2flick: $\text{Belga}\to \text{Flickr32}$
 >
->belga2toplogo: $Belga\to Toplogo10$
+>belga2toplogo: $\text{Belga}\to \text{Toplogo10}$
 >
->gtsrb2flick: $GTSRB\to Flickr32$
+>gtsrb2flick: $\text{GTSRB}\to \text{Flickr32}$
 >
->gtsrb2toplogo: $GTSRB\to Toplogo10$
+>gtsrb2toplogo: $\text{GTSRB}\to \text{Toplogo10}$
 
 >\<name of backbone>
 >
@@ -42,6 +45,9 @@ Cudnn = 8.6.0
 
 ### Nearest neighbor evaluation
 > python inference.py --backbone \<name of backbone> --data \<test data> --device \<device name> --dist \<distance metric>
+
+For instance, to run $\text{GTSRB}\to \text{TT100K}$ evaluation on the cpu with cosine distance metric, run the following script:
+>python inference.py --data gtsrb2tt100k --backbone densenet --device cpu --dist cosine
 
 
 ### Traditional GTSRB benchmark run this code
