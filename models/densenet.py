@@ -3,19 +3,30 @@ from tensorflow import keras
 from tensorflow.keras.layers import Input,Flatten,Dense,MaxPooling2D,Conv2D
 from tensorflow.keras.layers import BatchNormalization, Activation
 from .blocks import conv_block
-from .distances import Weighted_Euclidean_Distance
+from .distances import Weighted_Euclidean_Distance, Mahalanobis_Distance
 from .stn import stn
 from tensorflow.keras.applications import DenseNet121
 from models.senet import Senet
+import tensorflow as tf
 
-def create_densenet(input_shape = (64,64,3)):
+def count_layers(model):
+   num_layers = len(model.layers)
+   for layer in model.layers:
+      if isinstance(layer, tf.keras.Model):
+         num_layers += count_layers(layer)
+   return num_layers
+
+def create_densenet(input_shape = (64,64,3),dense_truncated_layer='conv3_block2_concat'):
     inp = Input(input_shape)
     
     densnet = DenseNet121(
         input_shape=input_shape,weights='imagenet',include_top=False)
+    #densnet.summary()
+    #print(f'layer of base is {count_layers(densnet)}')
     dens_encoder = keras.Model(
         inputs=densnet.inputs,
-        outputs=densnet.get_layer('conv3_block2_concat').output)
+        outputs=densnet.get_layer(dense_truncated_layer).output)#conv3_block2_concat
+    #print(f'layer of GFENet is {count_layers(dens_encoder)}')
     x = stn(inp,[64,64,100],kernel_size=(5,5),stage=1)
     x = dens_encoder(x)
     x = Conv2D(
@@ -30,12 +41,13 @@ def create_densenet(input_shape = (64,64,3)):
     x = Activation('linear')(x)
     return keras.Model(inp,x,name='encoder')
 
-def create_model(input_shape = (64,64,3)):
+def create_model(input_shape = (64,64,3),truncated_layer='conv3_block2_concat'):
     support = Input(input_shape)
     query = Input(input_shape)
-    encoder = create_densenet(input_shape=input_shape)
+    encoder = create_densenet(input_shape=input_shape,dense_truncated_layer=truncated_layer)
+    #encoder.summary()
     support_features = encoder(support)
     query_features = encoder(query)
-    dist = Weighted_Euclidean_Distance()([support_features,query_features])
+    dist = Mahalanobis_Distance()([support_features,query_features])
     out = Activation("softmax")(dist)
     return Senet(inputs = [support,query],outputs=out)

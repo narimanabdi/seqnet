@@ -87,7 +87,8 @@ def run_test(encoder_h5,data,batch):
     print('\033[0m')
 
 if __name__ == '__main__':
-    encoder_file = 'model_files/best_encoders/' + args.backbone + '_' + args.data + '_encoder.h5'
+    #encoder_file = 'model_files/best_encoders/' + args.backbone + '_' + args.data + '_encoder.h5'
+    encoder_file = 'model_files/best_encoders/densenet_tt100kft_encoder.h5'
     if args.device == 'cpu':
         with tf.device('/cpu:0'):
             run_test(encoder_h5=encoder_file,data=args.data, batch=128)

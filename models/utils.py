@@ -1,4 +1,4 @@
-from models import densenet,resnet,mobilenet,densenetmini
+from models import densenet,resnet,mobilenet,densenetmini,densenet2
 from tensorflow.keras.applications import DenseNet121
 from tensorflow import keras
 import tensorflow as tf
@@ -6,7 +6,7 @@ from tensorflow.keras.metrics import categorical_accuracy
 import numpy as np
 from keras import backend as K
 
-def make_senet_model(backbone,input_shape):
+def make_senet_model(backbone,input_shape,truncated_layer):
     """
     This function make the senet model based on different backbones
     ---------
@@ -20,7 +20,7 @@ def make_senet_model(backbone,input_shape):
     if backbone == 'resnet':
         return resnet.create_model(input_shape = input_shape)
     if backbone == 'densenet':
-        return densenet.create_model(input_shape = input_shape)
+        return densenet.create_model(input_shape = input_shape,truncated_layer=truncated_layer)
     if backbone == 'mobilenet':
         return mobilenet.create_model(input_shape = input_shape)
     if backbone == 'densenetmini':

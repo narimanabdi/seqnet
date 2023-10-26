@@ -11,7 +11,7 @@ from tensorflow.keras.models import load_model
 from models.senet import Senet
 
 
-parser = argparse.ArgumentParser('SENet')
+parser = argparse.ArgumentParser('SeNet')
 parser.add_argument('--backbone',type=str,default='densenet')
 parser.add_argument('--test',type=str,default='gtsrb2tt100k')
 parser.add_argument('--epochs',type=int,default=50)
@@ -52,7 +52,7 @@ def meta_train(ep):
 
     best_test_acc = 0.0
 
-    senet = make_senet_model(backbone=backbone,input_shape=(dim,dim,3))
+    senet = make_senet_model(backbone=backbone,input_shape=(dim,dim,3),truncated_layer='conv3_block3_concat')
     optimizer_fn = keras.optimizers.Adam(learning_rate=lr,epsilon=1.0e-8)
     senet.compile(
         optimizer=optimizer_fn,loss_fn=loss_mse,
@@ -62,16 +62,23 @@ def meta_train(ep):
     train_datagen,test_datagen = make_data_generator(args.test)
     for step in range(4):
         print(f'=====step {step+1}=====')
+        #noimprovement = 0
         for epoch in range(ep):
-            print(f'====epoch{epoch+1}/{ep}====')
-            senet.fit(train_datagen)
+            #print(f'====epoch{epoch+1}/{ep}====')
+            senet.fit(train_datagen, verbose=0)
             te_acc = senet.evaluate(test_datagen, verbose=0)
             if te_acc >= best_test_acc:
                 best_test_acc = te_acc
+                print(f'epoch: {epoch+1}, best test accuracy:{best_test_acc:.4f}')
                 senet.save(model_h5)
                 senet.save_weights('best_weights.h5')
-            print(f'test accuracy: {te_acc:.4f}')
-            print(f'best test accuracy: {best_test_acc:.4f}')
+                #noimprovement = 0
+            #else:
+                #noimprovement = noimprovement + 1
+            #if noimprovement == 30:
+                #break
+            
+            #print(f'best test accuracy: {best_test_acc:.4f}')
         senet.load_weights('best_weights.h5')
         optimizer_fn.learning_rate = optimizer_fn.learning_rate / 2   
    
