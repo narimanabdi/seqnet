@@ -1,0 +1,19 @@
+{
+  "labels_path" : "datasets/CCTSDB/GroundTruth/groundtruth0000-9999.txt",
+  "loader" : "gtsrb2tt100k",
+  "encoder_file" : "model_files/best_encoders/densenet_gtsrb2tt100k_encoder.h5",
+  "video_path" : "output_videos",
+  "scenarios" : [{
+        "scenarioID": 1,
+        "path": "image6000-6999",
+        "startFrame": 5535,
+        "numberFrame": 877
+    }, {
+        "scenarioID": 2,
+        "path": "image7000-7999",
+        "startFrame": 6412,
+        "numberFrame": 775
+
+    }],
+  "bbox_convert_dict" : {"x_min": "float", "y_min": "float", "x_max": "float", "y_max": "float"}
+}

@@ -22,3 +22,9 @@ model_files/
 
 #ignore jupyter notebook files
 *.ipynb
+
+#ignore pycharme idea
+.idea
+
+#ignore video files
+*.avi
