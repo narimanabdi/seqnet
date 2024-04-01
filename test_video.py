@@ -110,7 +110,7 @@ def compute_FPS(read_input_time,inference_time):
 
 def generate_image_sequences(start_frame, end_frame, folder_name):
     images = []
-    fps_list = []
+    fps_list = []git status
     print("Inference proccedure is started")
     for i in tqdm(range(start_frame,end_frame)):
         s_time = time()
