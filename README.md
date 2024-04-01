@@ -62,3 +62,7 @@ For instance, to run $\text{GTSRB}\to \text{TT100K}$ evaluation on the cpu with 
 > \<mode name>: train: training, test: evaluation
 
 ## Video Showcase for Real-World Scenario
+
+https://github.com/narimanabdi/seqnet/assets/158992158/c458c6ad-6cf5-496d-b34f-16645a704777
+
+
