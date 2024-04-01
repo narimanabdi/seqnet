@@ -4,19 +4,20 @@ from PIL import Image, ImageDraw, ImageFont, ImageFile
 import numpy as np
 import matplotlib.pyplot as plt
 from time import time
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 import cv2
 from tqdm import tqdm
 import tensorflow as tf
 from data_loader import get_loader
 from tensorflow import keras
 from models.stn import BilinearInterpolation,Localization
-from models.distances import Euclidean_Distance, Cosine_Distance
-from models.senet import Senet
+from models.distances import Euclidean_Distance
 import json
 
 json_file = open('cfgs/test_video.json')
 config = json.load(json_file)
+
+
 
 def normalize(img):
     return (img - np.min(img))/(np.max(img) - np.min(img))
@@ -44,21 +45,24 @@ class Inference:
                 'BilinearInterpolation': BilinearInterpolation,
                 'Localization': Localization}, compile=False)
         self.Xs = template_set
-        self.Zs = self.loaded_encoder(self.Xs)
+        self.Zs = self.loaded_encoder(self.standardize(self.Xs))
         self.dist_fn = Euclidean_Distance()
 
-    def standardize(self, img):
-        mean = np.mean(img)
-        std = np.std(img)
+    @tf.function
+    def standardize(self,img):
+        img = tf.cast(img, dtype=tf.float32)
+        mean = tf.math.reduce_mean(img)
+        std = tf.math.reduce_std(img)
         return (img - mean) / std
 
-    def nn(self,model, inp, ztemplates,dist_fn):
+    @tf.function
+    def nn(self,model, inp, ztemplates):
         z = model(tf.expand_dims(inp, axis=0))
-        return dist_fn([ztemplates, z])
+        return self.dist_fn([ztemplates, z])
 
     def __call__(self, input_image):
         x = self.standardize(input_image)
-        p = self.nn(self.loaded_encoder,x,ztemplates=self.Zs,dist_fn=Euclidean_Distance())
+        p = self.nn(self.loaded_encoder,x,ztemplates=self.Zs)
         # z = self.loaded_encoder(tf.expand_dims(x, axis=0))
         # p = self.dist_fn([self.Zs, z])
         return self.Xs[np.argmax(p)]
@@ -106,7 +110,7 @@ def compute_FPS(read_input_time,inference_time):
 
 def generate_image_sequences(start_frame, end_frame, folder_name):
     images = []
-    FPS_list = []
+    fps_list = []
     print("Inference proccedure is started")
     for i in tqdm(range(start_frame,end_frame)):
         s_time = time()
@@ -125,10 +129,10 @@ def generate_image_sequences(start_frame, end_frame, folder_name):
         inference_time = time() - s_time
 
 
-        #FPS_list += [compute_FPS(read_input_time,inference_time)]
-        FPS = compute_FPS(read_input_time,inference_time)
+        fps_list += [compute_FPS(read_input_time,inference_time)]
+        #FPS = compute_FPS(read_input_time,inference_time)
 
-        final_image = generate_output(input_image=img, bbox_list=bbox_list, predictions=predictions, FPS=FPS)
+        final_image = generate_output(input_image=img, bbox_list=bbox_list, predictions=predictions, FPS=np.mean(fps_list))
 
         images += [final_image]
 
@@ -137,11 +141,12 @@ def generate_image_sequences(start_frame, end_frame, folder_name):
 
 def generate_video(scenario_dict):
     for sc in scenario_dict:
+        print(f"Scenario: {sc['scenarioID']} is started")
         images = generate_image_sequences(start_frame=sc["startFrame"], end_frame=sc["startFrame"] + sc["numberFrame"],folder_name=sc["path"])
         video_file_name = "output_video_sc_" + str(sc["scenarioID"]) + ".avi"
         video_file = os.path.join(video_path,video_file_name)
         width, height = images[0].size
-        video = cv2.VideoWriter(video_file, 0,5, (width,height))
+        video = cv2.VideoWriter(video_file, 0,10, (width,height))
         print("Video generation is started")
         for image in tqdm(images):
             img_np = np.array(image)
@@ -156,6 +161,7 @@ if __name__ == "__main__":
     scenarios = config["scenarios"]
     bbox_convert_dict = config["bbox_convert_dict"]
 
+    ImageFile.LOAD_TRUNCATED_IMAGES = True
 
     data = pd.read_csv(labels_path, sep=";").astype(bbox_convert_dict)
     new_data = data.groupby("file_name").agg(list)

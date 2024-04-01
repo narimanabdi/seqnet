@@ -37,7 +37,7 @@ def get_test_generator_for_video():
     support_path = os.path.join(template_path,"all_video")
     classes = np.asarray(os.listdir(support_path))
     classes.sort()
-    X = np.empty((42,*target_size,3))
+    X = np.empty((47,*target_size,3))
     for i,C in enumerate(classes):
         c_path = os.path.join(support_path,C)
         for f in os.listdir(c_path):
