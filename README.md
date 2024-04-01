@@ -1,4 +1,4 @@
-# Code Repository for SENet Paper
+# Code Repository for SeqNet Paper
 
 ## Requierments
 
@@ -60,3 +60,5 @@ For instance, to run $\text{GTSRB}\to \text{TT100K}$ evaluation on the cpu with 
 > python gtsrb-benchmark.py --mode \<mode name> --epochs \<number of epochs> 
 > 
 > \<mode name>: train: training, test: evaluation
+
+## Video Showcase for Real-World Scenario
